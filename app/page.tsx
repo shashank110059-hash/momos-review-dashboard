@@ -1,23 +1,37 @@
 "use client";
 
 import { useState } from "react";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
+import FollowInstagram from "../components/FollowInstagram";
 import ReviewCard from "../components/ReviewCard";
 
 export default function Home() {
   const [started, setStarted] = useState(false);
+  const [followed, setFollowed] = useState(true);
   const [rating, setRating] = useState(0);
   const [selectedReview, setSelectedReview] = useState("");
   const [reviewOptions, setReviewOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
+  if (followed && !started) {
+  return (
+    <FollowInstagram
+      onContinue={() => setStarted(true)}
+    />
+  );
+}
   if (started) {
     return (
-      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 py-10">
-        <h1 className="text-5xl font-bold text-red-500">
+      <main className="min-h-screen bg-black text-white flex flex-col items-center px-6 pt-28 pb-10">
+
+        <Navbar />
+
+        <h1 className="text-5xl font-bold text-red-500 text-center">
           How was your experience?
         </h1>
 
-        <p className="mt-4 text-gray-400">
+        <p className="mt-4 text-gray-400 text-center">
           Tap a star to continue
         </p>
 
@@ -43,9 +57,6 @@ export default function Home() {
 
                   const data = await res.json();
 
-                  console.log("API Response:", data);
-
-                  // NEW DEBUG CODE
                   if (!res.ok) {
                     alert(JSON.stringify(data));
                     setLoading(false);
@@ -53,8 +64,7 @@ export default function Home() {
                   }
 
                   if (!data.reviews) {
-                    alert("reviews field is missing");
-                    console.log(data);
+                    alert("Reviews not received.");
                     setLoading(false);
                     return;
                   }
@@ -71,7 +81,7 @@ export default function Home() {
 
                 setLoading(false);
               }}
-              className={`text-6xl transition hover:scale-110 ${
+              className={`text-6xl transition duration-300 hover:scale-125 ${
                 rating >= star ? "text-yellow-400" : "text-gray-600"
               }`}
             >
@@ -81,16 +91,22 @@ export default function Home() {
         </div>
 
         {rating > 0 && (
-          <div className="mt-10 text-center w-full max-w-2xl">
-            <p className="text-2xl text-green-400">
-              You selected {rating} Star{rating > 1 ? "s" : ""}
-            </p>
+          <div className="mt-12 w-full max-w-2xl">
 
-            <div className="mt-6 space-y-4">
+            <h2 className="text-center text-2xl font-bold text-green-400">
+              You selected {rating} Star{rating > 1 ? "s" : ""}
+            </h2>
+
+            <div className="mt-8 space-y-4">
+
               {loading ? (
-                <p className="text-gray-400">
-                  Generating AI reviews...
-                </p>
+                <div className="text-center py-12">
+                  <div className="text-6xl animate-bounce">🍜</div>
+
+                  <p className="mt-4 text-lg text-gray-400">
+                    Cooking your perfect AI review...
+                  </p>
+                </div>
               ) : (
                 reviewOptions.map((review, index) => (
                   <ReviewCard
@@ -101,18 +117,20 @@ export default function Home() {
                   />
                 ))
               )}
+
             </div>
 
             {selectedReview && (
-              <div className="mt-8 flex gap-4 justify-center flex-wrap">
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
+
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(selectedReview);
                     alert("Review copied!");
                   }}
-                  className="bg-red-600 hover:bg-red-700 px-8 py-4 rounded-xl text-xl font-bold"
+                  className="rounded-full bg-red-600 px-8 py-4 text-lg font-bold transition hover:scale-105 hover:bg-red-700"
                 >
-                  Copy Review
+                  📋 Copy Review
                 </button>
 
                 <button
@@ -122,34 +140,39 @@ export default function Home() {
                       "_blank"
                     );
                   }}
-                  className="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-xl text-xl font-bold"
+                  className="rounded-full bg-green-600 px-8 py-4 text-lg font-bold transition hover:scale-105 hover:bg-green-700"
                 >
-                  Open Google Review
+                  ⭐ Open Google Review
                 </button>
+
               </div>
             )}
+
           </div>
         )}
+
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col justify-center items-center">
-      <h1 className="text-6xl font-bold text-red-500">
-        Momos Nation Cafe
-      </h1>
+    <main className="bg-black text-white">
 
-      <p className="mt-5 text-2xl">
-        AI Powered Review Dashboard
-      </p>
+      <Navbar />
 
-      <button
-        onClick={() => setStarted(true)}
-        className="mt-10 bg-red-600 hover:bg-red-700 px-10 py-5 rounded-xl text-2xl font-bold"
-      >
-        Get Started
-      </button>
+      <Hero />
+
+      <div className="fixed bottom-10 left-1/2 z-50 -translate-x-1/2">
+
+        <button
+          onClick={() => setFollowed(true)}
+          className="rounded-full bg-red-600 px-10 py-5 text-xl font-bold shadow-2xl transition duration-300 hover:scale-110 hover:bg-red-700"
+        >
+          🚀 Get Started
+        </button>
+
+      </div>
+
     </main>
   );
 }

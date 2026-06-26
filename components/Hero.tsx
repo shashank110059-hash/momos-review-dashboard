@@ -5,69 +5,64 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section
-      className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/hero-bg.jpg')",
-      }}
-    >
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/80"></div>
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
 
-      {/* Main Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 flex flex-col items-center text-center px-6"
-      >
+      {/* Background Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.18),transparent_65%)]" />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl px-6 text-center">
+
         {/* Logo */}
         <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{
-            repeat: Infinity,
-            duration: 3,
-          }}
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.7 }}
         >
           <Image
             src="/logo.png"
             alt="Momos Nation Cafe"
             width={180}
             height={180}
-            className="rounded-full border-4 border-red-600 shadow-[0_0_35px_rgba(255,0,0,0.6)]"
+            priority
+            className="mx-auto rounded-full border-4 border-red-600 shadow-[0_0_40px_rgba(255,0,0,0.45)]"
           />
         </motion.div>
 
         {/* Heading */}
-        <h1 className="mt-8 text-5xl md:text-7xl font-extrabold text-white">
+        <motion.h1
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8 text-5xl md:text-7xl font-extrabold text-white"
+        >
           Momos Nation Cafe
-        </h1>
+        </motion.h1>
 
-        {/* Subtitle */}
-        <p className="mt-3 text-xl text-red-400 font-semibold">
+        {/* Tagline */}
+        <p className="mt-4 text-2xl md:text-3xl font-semibold text-red-500">
           Simply Awesome
         </p>
 
-        {/* Description */}
-        <p className="mt-8 max-w-2xl text-lg text-gray-300 leading-8">
-          Every bite tells a story. Your feedback helps us serve you better.
-          Share your experience and let our AI help you write the perfect Google review.
-        </p>
-
         {/* Stars */}
-        <div className="mt-10 flex gap-3 text-5xl">
-          <span className="text-yellow-400">★</span>
-          <span className="text-yellow-400">★</span>
-          <span className="text-yellow-400">★</span>
-          <span className="text-yellow-400">★</span>
-          <span className="text-yellow-400">★</span>
+        <div className="mt-8 flex justify-center gap-2 text-5xl">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className="text-yellow-400 drop-shadow-lg animate-pulse"
+            >
+              ⭐
+            </span>
+          ))}
         </div>
 
-        {/* Tagline */}
-        <p className="mt-5 text-gray-300 text-lg">
-          ⭐ Loved your food? Rate us below.
+        {/* Description */}
+        <p className="mx-auto mt-8 max-w-2xl text-lg md:text-2xl leading-8 text-gray-300">
+          Love our momos? Share your experience and let AI help you write
+          the perfect Google Review in just a few seconds.
         </p>
-      </motion.div>
+
+      </div>
     </section>
   );
 }

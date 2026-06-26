@@ -1,56 +1,32 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+import reviews from "../../../data/reviews.json";
 
 export async function POST(req: Request) {
   try {
     const { rating } = await req.json();
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-    });
+    const list = reviews[String(rating) as keyof typeof reviews];
 
-    const prompt = `
-You are helping customers write Google Reviews.
+    if (!list) {
+      return Response.json(
+        { error: "Invalid Rating" },
+        { status: 400 }
+      );
+    }
 
-Restaurant Name: Momos Nation Cafe
+    // Shuffle reviews
+    const shuffled = [...list].sort(() => Math.random() - 0.5);
 
-Rating: ${rating} stars
-
-Write exactly 5 different Google reviews.
-
-Rules:
-- Natural
-- Human sounding
-- 20-40 words each
-- No emojis
-- No numbering
-- No quotation marks
-- Return each review on a new line.
-`;
-
-    const result = await model.generateContent(prompt);
-
-    const text = result.response.text();
-
-    const reviews = text
-      .split("\n")
-      .filter((line) => line.trim() !== "");
-
+    // Return first 5
     return Response.json({
-      reviews,
+      reviews: shuffled.slice(0, 5),
     });
 
-  } catch (error: any) {
-    console.error("========== GEMINI ERROR ==========");
+  } catch (error) {
     console.error(error);
-    console.error("==================================");
 
     return Response.json(
       {
-        success: false,
-        error: error?.message || "Unknown error",
-        details: String(error),
+        error: "Internal Server Error",
       },
       { status: 500 }
     );
